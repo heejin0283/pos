@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>뚜레쥬르: 포스기</title>
+        <style>
+            body{
+                margin:0;
+                padding:0;
+                font-family: 'ChosunGu', sans-serif;
+                height: 100%;
+                overflow-y: scroll; /* 세로 스크롤 생성 */
+            }
+            html, body {
+                height: 100%; /* 전체 화면 높이 사용 */
+                margin: 0;
+                padding: 0;
+                overflow: auto; /* 전체 스크롤 활성화 */
+            }
+            /*폰트설정*/
+            @font-face {
+                font-family: 'ChosunGu';
+                src: url('font/조선굴림체.TTF') format('woff'),
+            }
+            
+            /*그린배너*/
+            .greenbanner {
+                background-color: rgb(13, 70, 51);
+                color: white;
+                font-size: 20px;
+                display: flex;
+                flex-direction: column; /* 세로 정렬 */
+                align-items: center;
+                position: fixed; /* 화면 왼쪽에 고정 */
+                top: 0; /* 화면 상단에 붙이기 */
+                left: 0; /* 화면 왼쪽에 붙이기 */
+                width: 80px; /* 배너 너비 */
+                height: 100vh; /* 전체 화면 높이 */
+                z-index: 1000; /* 다른 요소 위에 배치 */
+                box-sizing: border-box; /* 패딩 포함 계산 */
+            }
+            .info-links {
+                display: flex;
+                flex-direction: column; /* 세로 방향 정렬 */
+                gap: 30px; /* 링크 간 간격 */
+                margin-top: 10px;
+                align-items: center; /* 텍스트와 이미지 정렬 */
+            }
+            .info-links a {
+                text-decoration: none;
+                color: white;
+                position: relative; /* :after 배치 기준 */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 40px;
+                height: 40px;
+
+            }
+            .info-links a:hover::after{
+                content: '';
+                position: absolute;
+                background-color: rgb(59, 123, 92);
+                width: 80px; /* 정사각형 크기 */
+                height: 70px; /* 정사각형 크기 */
+                z-index: -1; /* 배경이 글자 뒤로 가도록 */
+                top: 50%; /* 버튼의 중앙에 위치 */
+                left: 50%;
+                transform: translate(-50%, -50%);
+
+            }
+
+            /* 선택된 버튼 스타일 */
+            .info-links .active {
+                background-color: white; /* 배경 흰색 */
+                color: rgb(13, 70, 51); /* 글자 초록색 */
+                font-weight: bold;
+            }
+
+            .info-links a.active:after {
+                content: '';
+                position: absolute;
+                background-color: white;
+                width: 80px; /* 정사각형 크기 */
+                height: 70px; /* 정사각형 크기 */
+                z-index: -1; /* 배경이 글자 뒤로 가도록 */
+                top: 50%; /* 버튼의 중앙에 위치 */
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .info-links img {
+                width: 20px; /* 이미지 너비 */
+                height: auto; /* 이미지 비율 유지 */
+            }
+            
+            .menu {
+                width: 25px;
+                height: 30px;
+                background-image: url("icon/free-icon-font-white-menu.png");
+                background-size: cover;
+                background-position: center;
+            }
+
+            .menu.active {
+                background-image: url("icon/free-icon-font-green-menu.png");
+            }
+            
+            .book{
+                width: 25px;
+                height: 30px;
+                background-image: url("icon/free-icon-font-white-book.png");
+                background-size: cover;
+                background-position: center;
+            }
+            .book.active {
+                background-image: url("icon/free-icon-font-green-book.png");
+            }
+            .map{
+                width: 25px;
+                height: 30px;
+                background-image: url("icon/free-icon-font-white-marker.png");
+                background-size: cover;
+                background-position: center;
+            }
+            .map.active {
+                background-image: url("icon/free-icon-font-green-marker.png");
+            }
+
+            .music{
+                width: 25px;
+                height: 30px;
+                background-image: url("icon/music-white-note.png");
+                background-size: cover;
+                background-position: center;
+            }
+            .music.active {
+                background-image: url("icon/music-green-note.png");
+            }
+            .calender{
+                width: 25px;
+                height: 30px;
+                background-image: url("icon/free-icon-font-calendar-white-lines.png");
+                background-size: cover;
+                background-position: center;
+            }
+            .calender.active {
+                background-image: url("icon/free-icon-font-calendar-green-lines.png");
+            }
+            .exit{
+                width: 25px;
+                height: 30px;
+                background-image: url("icon/free-icon-font-sign-out-white-alt.png");
+                background-size: cover;
+                background-position: center;
+            }
+            .exit.active {
+                background-image: url("icon/free-icon-font-sign-out-green-alt.png");
+            }
+            /*상단*/
+            .logobanner{
+                display:flex;
+                gap:20px;
+            }
+            .detail{
+                margin-top:19px;
+                text-align:right;
+                white-space: nowrap;/*줄바꿈방지*/
+                flex: 1;
+                font-size:14px;
+            }
+            #current-time {
+                display: inline; /* div 요소를 한 줄에 표시 */
+            }
+            /*화이트배너*/
+            .whitebanner{
+                background-color: rgb(255, 255, 255);
+                font-size: 20px;
+                display: flex;
+                flex-direction: column; /* 세로 정렬 */
+                position: fixed; /* 화면 왼쪽에 고정 */
+                top: 56px; /* 화면 상단에 붙이기 */
+                left: 80px; /* 화면 왼쪽에 붙이기 */
+                width: 500px; /* 배너 너비 */
+                height: 100vh; /* 전체 화면 높이 */
+                z-index: 1000; /* 다른 요소 위에 배치 */
+                box-sizing: border-box; /* 패딩 포함 계산 */
+                font-family: 'ChosunGu', sans-serif;
+            }
+            .button-container {
+                justify-content: center;
+                display: flex; /* Flexbox 활성화 */
+                align-items: center; /* 가운데 정렬 */
+                gap: 20px; /* 버튼 간 간격 */
+                margin-top: 10px; /* 상단 여백 */
+            }
+
+            button {
+                width: 200px;
+                height: 50px;
+                background-color: white;
+                color: black;
+                border-radius: 5px;
+                font-size: 17px;
+                font-family: 'ChosunGu', sans-serif;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                border: 1px solid rgb(13, 70, 51);
+            }
+
+            button:hover {
+                background-color: rgb(238, 238, 238);
+            }
+
+            /*상품명 수량 금액*/
+            .product-table {
+
+                align-items: center;
+                width: 85%;
+                margin: 10px auto;
+                border-collapse: collapse;
+                font-size:17px;
+            }
+
+            .product-table th, .product-table td {
+                padding: 10px;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .product-table th {
+                background-color: rgb(153, 157, 171);
+                color: white;
+                border-bottom: 1px solid #ddd;
+                font-weight: normal;
+            }
+
+            .result-container {
+                display: flex; /* result와 버튼 컨테이너를 가로로 배치 */
+                align-items: flex-start; /* 상단 정렬 */
+                justify-content: space-between; /* 좌우 간격 확보 */
+                margin: 10px 48px; /* 좌우 여백 */
+                margin-top:0px;
+                margin-bottom:0px;
+            }
+            /*결과 총수량 거스름돈 등*/
+            .result {
+                font-size: 15px;
+                line-height: 2;
+                text-align: left;
+                color: #666666;
+                width: 60%; /* 좌측 영역 너비 설정 */
+            }
+            /*버튼*/
+            .button-container-right {
+                display: flex;
+                flex-direction: column; /* 버튼을 세로로 배치 */
+                align-items: center;
+                gap: 10px; /* 버튼 간 간격 */
+            }
+            .button-container-right button {
+                width: 80px;
+                height: 90px;
+                background-color: white;
+                color: black;
+                border-radius: 5px;
+                font-size: 17px;
+                font-family: 'ChosunGu', sans-serif;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+                border: 1px solid rgb(13, 70, 51);
+                padding:20px;
+                line-height: 1.5;
+                margin-top:5px;
+            }
+
+            .button-container-right button:hover {
+                background-color: rgb(238, 238, 238);
+            }
+            #cancel-all {
+                background-color: rgb(170, 174, 188);
+                color: white;
+                border: 1px solid #928cac;
+            }
+
+            #cancel-all:hover {
+                background-color: rgb(137, 140, 148);
+            }
+
+            /*화이트배너 아래 버튼*/
+            .bottom-button-container {
+                margin-top:-5px;
+                margin-left:30px;
+                display: flex;
+                gap: 10px; /* 버튼 간 간격 */
+                padding: 10px; /* 내부 여백 */
+                left: 80px; /* 화이트 배너에 맞춰 위치 */
+                width: 500px; /* 화이트 배너의 너비와 동일 */
+                z-index: 1001; /* 다른 요소 위에 배치 */
+            }
+
+            .bottom-button-container button {
+                width: 130px; /* 버튼 너비 */
+                height: 55px; /* 버튼 높이 */
+                background-color: white; /* 배경색 */
+                color: rgb(66, 66, 66); /* 텍스트 색상 */
+                border-radius: 5px; /* 둥근 모서리 */
+                font-size: 17px; /* 글꼴 크기 */
+                font-family: 'ChosunGu', sans-serif; /* 글꼴 */
+                cursor: pointer; /* 클릭 커서 */
+                transition: background-color 0.3s ease; /* 호버 시 전환 효과 */
+                border: 1px solid rgb(13, 70, 51); /* 테두리 색상 */
+            } 
+            
+            .bottom-button-container button:hover {
+                background-color: rgb(238, 238, 238); /* 호버 시 배경색 */
+            }
+            /*오렌지배너*/
+            .orangebanner{
+                background-color: rgb(247, 240, 223);
+                font-size: 20px;
+                display: flex;
+                flex-direction: column; /* 세로 정렬 */
+                position: fixed; /* 화면 왼쪽에 고정 */
+                top: 56px; /* 화면 상단에 붙이기 */
+                left: 580px; /* 화면 왼쪽에 붙이기 */
+                width: 957px; /* 배너 너비 */
+                height: 100vh; /* 전체 화면 높이 */
+                z-index: 1000; /* 다른 요소 위에 배치 */
+                font-family: 'ChosunGu', sans-serif;
+            }
+
+            .orangebanner .button-table {
+                width:715px;
+                display: flex; /* Flexbox 활성화 */
+                align-items: center; /* 버튼 세로 정렬 */
+                margin-left: 30px; 
+                margin-top:10px; /* 외부 여백 */
+                background-color: rgb(247, 240, 223); /* 배너 배경색 */
+                border-radius: 10px; /* 둥근 모서리 */
+                padding: 10px; /* 내부 여백 */
+            }
+
+            .orangebanner .button-table button {
+                flex: 1; /* 버튼이 동일한 너비로 확장 */
+                height: 60px; /* 버튼 높이 */
+                font-size: 19px; /* 글꼴 크기 */
+                font-family: 'ChosunGu', sans-serif; /* 글꼴 */
+                color: rgb(0, 0, 0); /* 텍스트 색상 */
+                background-color: white; /* 버튼 배경색 */
+                border-top: 1px solid rgb(13, 70, 51); /* 테두리 */
+                border-bottom: 1px solid rgb(13, 70, 51); /* 테두리 */
+                border-left: none; /* 왼쪽 테두리 제거 */
+                border-radius: 0px; /* 둥근 모서리 */
+                cursor: pointer; /* 클릭 커서 */
+                transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+            }
+
+            /* 첫 번째 버튼만 왼쪽 테두리 추가 */
+            .orangebanner .button-table button:first-child {
+                border-left: 1px solid rgb(13, 70, 51);
+            }
+
+            /* 마지막 버튼만 오른쪽 테두리 추가 */
+            .orangebanner .button-table button:last-child {
+                border-right: 1px solid rgb(13, 70, 51);
+            }
+
+            .orangebanner .button-table button:hover {
+                background-color: rgb(229, 229, 229); /* 호버 시 배경색 */
+            }
+
+            .orangebanner .button-table button.active {
+                background-color: rgb(111, 61, 18); /* 활성 버튼 배경색 */
+                color: white; /* 활성 버튼 텍스트 색상 */
+            }
+
+
+            /*오렌지배너 검색기능*/
+            .search-container {
+                display: flex;
+                justify-content: flex-end; /* 오른쪽 정렬 */
+                margin-right: 20px; /* 오른쪽 여백 */
+                margin-bottom: 10px; /* 아래 여백 */
+            }
+            .orangebanner .search-button {
+                position:fixed;
+                margin-left:790px;
+                margin-top: 20px;
+                width: 120px;
+                height: 64px;
+                font-weight:bold;
+                background-color: rgb(205, 96, 0);
+                border: 1px solid rgb(13, 70, 51);
+                font-size: 19px;
+                font-family: 'ChosunGu', sans-serif;
+                cursor: pointer;
+                border-radius:10px;
+                color:white;
+                border:1px solid rgb(153, 153, 153);
+            }
+
+            .orangebanner .search-button:hover {
+                background-color: rgb(181, 102, 33);
+            }
+            .orangebanner .search-button img {
+                width: 22px;                /* 이미지 크기 설정 */
+                height: auto;               /* 비율 유지 */
+                margin-bottom: -5px;         /* 텍스트와 이미지 간격 */
+                margin-left:-5px;
+            }
+
+            /*중분류, 빵종류등 오렌지배너 왼쪽 표*/
+            .left-table {
+                color:#3f3f3f;
+                width: 146px;    
+                margin-top:100px;
+                margin-left:40px;          
+                background-color: rgb(247, 240, 223);
+                font-size: 20px;
+                justify-content: center;
+                position:fixed;
+            }
+
+            .left-table table {
+                width: 100%;
+                border-collapse: collapse;  
+            }
+            .left-table th, .left-table td {
+
+                height:40px;
+                background-color: rgb(247, 240, 223); 
+                padding: 10px;              /* 셀 여백 */
+                font-size: 17px;
+                border-bottom: 1px solid rgb(200, 200, 200); /* 셀 테두리 */
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+            /* 중분류 강조 스타일 */
+            .left-table td.active {
+                background-color: rgb(205, 96, 0); /* 강조된 배경색 */
+                color:white;
+            }
+            .left-table td.active:hover {
+                background-color: rgb(205, 96, 0); /* 강조 상태 유지 */
+            }
+
+            .left-table td:hover {
+                background-color: rgb(223, 211, 184); /* 호버 시 배경색 */
+            }
+            /*중분류 물품들*/
+            /* 물품 버튼 */
+            .product-buttons {
+                display: flex;
+                flex-wrap: wrap; /* 여러 줄로 버튼 정렬 */
+                gap: 10px; /* 버튼 간 간격 */
+                width: 80%;
+                margin-left:220px;
+                margin-top:10px;
+                
+            }
+
+            .product-buttons button {
+                
+                width:130px;
+                height: 140px; /* 버튼 높이 */
+                background-color: white;
+                color: rgb(96, 76, 62);
+                border: 1px solid rgb(96, 76, 62);
+                border-radius: 5px;
+                border:1px solid rgb(177, 177, 177);
+                font-size: 16px;
+                cursor: pointer;
+            }
+            .product-buttons button:hover{
+                border:2px solid rgb(151, 129, 114);
+                transition: background-color 0.3s ease;
+            }
+
+            .product-buttons button.active {
+                background-color: rgb(101, 51, 7);
+                color: white;
+            }
+            .product-buttons button img{
+                width:100px;
+                height:auto;
+            }
+
+
+            /*페이지넘어가는버튼*/
+            .page-buttons {
+                gap:5px;
+                position:fixed;
+                display: flex;
+                margin-left:35px;
+                margin-top:730px;
+            }
+
+            .page-buttons button{
+                height:60px;
+                width:74px;
+                border:1px solid rgb(161, 160, 160);
+            }
+
+            .page-number {
+                margin-top:-100px;
+                margin-left:360px;
+                font-size: 16px; /* 글씨 크기 */
+                color: rgb(96, 76, 62); /* 색상 */
+                font-family: 'ChosunGu', sans-serif; /* 폰트 설정 */
+                display: flex;
+                align-items: center; /* 세로 중앙 정렬 */
+                justify-content: center; /* 가로 중앙 정렬 */
+            }
+
+            /*결제버튼*/
+            .pay{
+                position:fixed;
+                gap:47px;
+                display: flex; /* Flexbox 활성화 */
+                justify-content: center; /* 가로로 가운데 정렬 */
+                align-items: center; /* 세로로 가운데 정렬 */
+                height: 80px; /* 화면 전체 높이를 사용 */
+                margin-left:220px;
+                margin-top:720px;
+            }
+            .pay button{
+                
+                width:200px;
+                height:60px;
+                border:1px solid rgb(177, 177, 177);
+                cursor: pointer;
+            }
+            .perfect-pay{
+                background-color: rgb(153, 157, 171);
+                color:white;
+                font-weight:bold;
+            }
+            .perfect-pay:hover{
+                background-color: rgb(133, 134, 138);
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class="greenbanner">
+            <div class="info-links">
+                <a href="#" class="intro menu"></a>
+                <a href="order.html" class="intro active" id="order-btn">주문</a>
+                <a href="business.html" class="intro" id="sales-btn">영업</a>
+                <a href="manage.html" class="intro" id="manage-btn">관리</a>
+                <br><br><br><br><br><br><br><br><br><br>
+                <a href="#" class="intro book" id="book-btn"></a>
+                <a href="#" class="intro map" id="map-btn"></a>
+                <a href="#" class="intro music" id="music-btn"></a>
+                <a href="#" class="intro calender" id="calender-btn"></a>
+                <a href="#" class="intro exit" id="exit-btn"></a>
+            </div>
+        </div>
+        <div class="logobanner">
+            &emsp;&emsp;&emsp;&emsp;<img src="image/logo.jpg"width="200px" height="auto">
+            <div class="detail">
+                ver 1.0.1.07 &emsp;영업일자: <div id="current-time"></div>&emsp;영수증번호: 01-0003&emsp;미전송: 0&emsp;통신상태: ON &emsp;
+            </div>
+        </div>
+        <hr>
+        <div class="whitebanner">
+            <div class="button-container">
+                <button id="print-reservation">예약증 출력</button>
+                <button id="cancel-receipt">직전 영수증 취소</button>
+            </div>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>상품명</th>
+                        <th>수량</th>
+                        <th>금액</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>딸기 생크림 케이크</td>
+                        <td>1</td>
+                        <td>25,000원</td>
+                    </tr>
+                    <tr>
+                        <td>초코 마카롱</td>
+                        <td>2</td>
+                        <td>6,000원</td>
+                    </tr>
+                    <tr>
+                        <td>아메리카노</td>
+                        <td>3</td>
+                        <td>12,000원</td>
+                    </tr>
+                    <tr>
+                        <td>아메리카노</td>
+                        <td>3</td>
+                        <td>12,000원</td>
+                    </tr>
+                    <tr>
+                        <td>아메리카노</td>
+                        <td>3</td>
+                        <td>12,000원</td>
+                    </tr>
+                    <tr>
+                        <td>아메리카노</td>
+                        <td>3</td>
+                        <td>12,000원</td>
+                    </tr>
+                    <tr>
+                        <td>아메리카노</td>
+                        <td>3</td>
+                        <td>12,000원</td>
+                    </tr>
+                    <tr>
+                        <td>딸기 생크림 케이크</td>
+                        <td>1</td>
+                        <td>25,000원</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>딸기 생크림 케이크</td>
+                        <td>1</td>
+                        <td>25,000원</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+            <div class="result-container">
+                <div class="result">
+                    총수량: 9<br>
+                    총 매출액: 120,390<br>
+                    할인 금액: 1,600<br>
+                    부가세: 490<br>
+                    받을 금액: 101,333<br>
+                    거스름돈: 0<br>
+                    받은금액: 101,333<br>
+                </div>
+                <div class="button-container-right">
+                    <button id="cancel-all">전체취소</button>
+                    <button id="cancel-last">직전취소</button>
+                </div>
+            </div>
+            <div class="bottom-button-container">
+                <button id="open-cash">돈통열기</button>
+                <button id="take-out-all">TAKE-OUT(전체)</button>
+                <button id="print-receipt">영수증인쇄</button>
+            </div>
+            <div class="bottom-button-container">
+                <button id="wait">대기</button>
+                <button id="sell-giftcard">기프트카드 판매/충전</button>
+                <button id="manage-giftcard">기프트카드 관리</button>
+            </div>
+        </div>
+
+        </div>
+        <div class="orangebanner">
+            <div class="button-table">
+                <button id="bread-button" class="active">빵</button></td>
+                <button id="gift-button">선물류</button></td>
+                <button id="product-button">상품</button></td>
+                <button id="cake-button">케이크</button></td>
+                <button id="coffee-button">커피</button></td>
+            </div>
+            <button class="search-button"><img src="icon/free-icon-font-white-search.png">&nbsp;&nbsp;검색</button>
+            <div class="left-table">
+                <table>
+                    <tbody>
+                        <tr><td class="category-btn active" data-category="all">중분류</td></tr>
+                        <tr><td class="category-btn" data-category="general">일반빵</td></tr>
+                        <tr><td class="category-btn" data-category="cream">크림빵</td></tr>
+                        <tr><td class="category-btn" data-category="cooking">조리빵</td></tr>
+                        <tr><td class="category-btn" data-category="pastry">패스트리</td></tr>
+                        <tr><td class="category-btn" data-category="whitebread">식빵</td></tr>
+                        <tr><td class="category-btn" data-category="doughnut">도넛</td></tr>
+                        <tr><td class="category-btn" data-category="europe">유럽건강빵</td></tr>
+                        <tr><td class="category-btn" data-category="sand">샌드위치/샐러드</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="product-buttons">
+            </div>
+            <div class="page-buttons">
+                <button id="prev-page" disabled><img src="icon\free-icon-font-angle-left.png" width="30px"></img></button>
+                <button id="next-page"><img src="icon\free-icon-font-angle-right.png"width="30px"></img></button>
+                <span id="page-number" class="page-number">1 / 1</span>
+            </div>
+            <div class="pay">
+                <button>현금 바로결제</button>
+                <button>신용카드 바로결제</button>
+                <button class="perfect-pay">제휴 및 결제</button>
+            </div>
+        </div>
+        <script>
+            // 카테고리별 상품 데이터
+        const products = {
+            all: [
+                { name: "건강빵(중분류)", image: "image/건강빵(중분류).jpg" },
+                { name: "[유상]비닐쇼핑백-가맹", image: "image/[유상]비닐쇼핑백-가맹.jpg" },
+                { name: "[유상]종이쇼핑백-가맹", image: "image/[유상]종이쇼핑백-가맹.jpg" },
+                { name: "초코청크머핀", image: "image/초코청크머핀.jpg" },
+                { name: "코코넛블루베리머핀", image:"image/코코넛블루베리머핀.jpg"},
+                { name: "오리지널까눌레", image:"image/오리지널까눌레.jpg"},
+                { name: "얼그레이까눌레", image:"image/얼그레이까눌레.jpg"},
+                { name: "생크림", image: "image/생크림.jpg"},
+                { name: "본마망딸기잼(30g)",image: "image/본마망딸기잼(30g).jpg"},
+                { name: "[수출]파티모자(별,블루)",image: "image/[수출]파티모자(별,블루).jpg"},
+                { name: "[수출]파티모자(별,핑크)",image: "image/[수출]파티모자(별,핑크).jpg"},
+                { name: "메이플피칸 크림치즈",image:"image/메이플피칸 크림치즈.jpg"},
+                { name: "쪽파베이컨크림치즈",image:"image/쪽파베이컨크림치즈.jpg"},
+                { name: "[유상]비닐쇼핑백-가맹",image:"image/[유상]비닐쇼핑백-가맹.jpg"},
+                { name: "버터쿠키(프렌치 낱개)",image:"image/버터쿠키(프렌치 낱개).jpg"},
+                { name: "아몬드비스킷(프렌치낱개)",image:"image/아몬드비스킷(프렌치낱개).jpg"}
+            ],
+            general: [
+                { name: "단팥빵", image: "image/단팥빵.jpg" },
+                { name: "고단백허니러스크", image: "image/고단백허니러스크.jpg" },
+                { name: "러스크가달구나(순진우유식빵)", image: "image/러스크가달구나(순진우유식빵).jpg" },
+                { name: "순수한맛순우유롤(8개입,봉)", image: "image/순수한맛순우유롤(8개입,봉).jpg" },
+                { name: "햄야채롤(6개입)", image: "image/햄야채롤(6개입).png" },
+                { name: "소보로빵", image: "image/소보로빵.jpg" },
+                { name: "카페모카빵(소)", image: "image/카페모카빵(소).jpg" },
+                { name: "쑥떡쑥떡콩쑥이", image: "image/쑥떡쑥떡콩쑥이.jpg" },
+                { name: "폭신폭신우유브레드", image: "image/폭신폭신우유브레드.jpg" },
+                { name: "완두앙금빵", image: "image/완두앙금빵.jpg" },
+                { name: "크림치즈호두과자빵", image: "image/크림치즈호두과자빵.jpg" },
+                { name: "호두카라멜스콘", image: "image/호두카라멜스콘.jpg" },
+                { name: "생크림버터스콘", image: "image/생크림버터스콘.jpg" },
+                { name: "블루베리스콘", image: "image/블루베리스콘.jpg" },
+                { name: "초코칩스콘", image: "image/초코칩스콘.jpg" },
+                { name: "연유퐁당밀크브레드(대)", image: "image/연유퐁당밀크브레드(대).jpg" },
+                { name: "연유퐁당밀크브레드(소)", image: "image/연유퐁당밀크브레드(소).jpg" },
+                { name: "달콩찹쌀브레드", image: "image/달콩찹쌀브레드.jpg" },
+                { name: "리얼브라우니", image: "image/리얼브라우니.jpg" },
+                { name: "까망쿠키속리얼말차브라우니", image: "image/까망쿠키속리얼말차브라우니.jpg" },
+                { name: "치즈브라우니", image: "image/치즈브라우니.jpg" },
+                { name: "호두브라우니", image: "image/호두브라우니.jpg" }
+            ],
+            cream: [
+                { name: "슈크림빵", image: "image/슈크림빵.jpg" },
+                { name: "리얼초코소라빵", image: "image/리얼초코소라빵.jpg" },
+                { name: "부드러운후레쉬크림샌드빵", image: "image/부드러운후레쉬크림샌드빵.jpg" },
+                { name: "클래식딸기잼맘모스", image: "image/클래식딸기잼맘모스.jpg" },
+                { name: "클래식딸기잼맘모스(소)", image: "image/클래식딸기잼맘모스(소).jpg.png" },
+                { name: "진짜고구마소보로", image: "image/진짜고구마소보로.jpg" },
+                { name: "순진크림치즈빵", image: "image/순진크림치즈빵.jpg" },
+                { name: "NEW단팥소보로", image: "image/NEW단팥소보로.jpg" },
+                { name: "순진우유크림빵", image: "image/순진우유크림빵.jpg" },
+                { name: "오리지널커피번", image: "image/오리지널커피번.jpg" },
+                { name: "후레쉬크림빵(버터크림빵)", image: "image/후레쉬크림빵(버터크림빵).jpg" },
+                { name: "카페모카크림빵(소)", image: "image/카페모카크림빵(소).jpg" },
+                { name: "밤이듬뿍맘모스(대)", image: "image/밤이듬뿍맘모스(대).jpg" },
+                { name: "밤이듬뿍맘모스(소)", image: "image/밤이듬뿍맘모스(소).jpg" },
+                { name: "마담얼그레이크림번", image: "image/마담얼그레이크림번.jpg" },
+                { name: "카스테라우유크림볼", image: "image/카스테라우유크림볼.jpg" },
+                { name: "빵속에리얼초코", image: "image/빵속에리얼초코.jpg" },
+                { name: "옥수수범벅", image: "image/옥수수범벅.jpg" },
+                { name: "사르르고구마케이크빵", image: "image/사르르고구마케이크빵.jpg" },
+                { name: "순꿀호떡", image: "image/순꿀호떡.jpg" },
+                { name: "쑥이듬뿍맘모스(대)", image: "image/쑥이듬뿍맘모스(대).jpg" },
+                { name: "쑥이듬뿍맘모스(소)", image: "image/쑥이듬뿍맘모스(소).png" },
+                { name: "생크림소보로", image: "image/생크림소보로.jpg" },
+                { name: "딸기생크림소보로", image: "image/딸기생크림소보로.png" },
+                { name: "까까웨뜨", image: "image/까까웨뜨.jpg" },
+                { name: "베이비슈", image: "image/베이비슈.jpg" }
+            ],
+            cooking: [
+                { name: "크로크무슈", image: "image/크로크무슈.jpg" },
+                { name: "낙엽소시지브레드", image: "image/낙엽소시지브레드.png" },
+                { name: "트윈에그브레드", image: "image/트윈에그브레드.jpg" },
+                { name: "미니햄치즈롤", image: "image/미니햄치즈롤.jpg" },
+                { name: "뚜레1번가치킨치즈롤", image: "image/뚜레1번가치킨치즈롤.jpg" },
+                { name: "치즈크로크무슈", image: "image/치즈크로크무슈.png" },
+                { name: "소시지쌍쌍브레드", image: "image/소시지쌍쌍브레드.jpg" },
+                { name: "NEW어니언소시지포카치아", image: "image/NEW어니언소시지포카치아.jpg" },
+                { name: "피자바게트", image: "image/피자바게트.jpg" },
+                { name: "바삭몬테크리스토(half)", image: "image/바삭몬테크리스토(half).jpg" },
+                { name: "NEW고소한후랑크소시지", image: "image/NEW고소한후랑크소시지.jpg" },
+                { name: "오리지널핫도그", image: "image/오리지널핫도그.jpg" },
+                { name: "마구마구고구마", image: "image/마구마구고구마.jpg" },
+                { name: "치즈방앗간(3개입)", image: "image/치즈방앗간(3개입).jpg" },
+                { name: "크림치즈호두과자빵", image: "image/크림치즈호두과자빵.jpg" }
+            ],
+            pastry:[
+                { name: "몽블랑의정석", image: "image/몽블랑의정석.jpg" },
+                { name: "오리지널크라상", image: "image/오리지널크라상.jpg" },
+                { name: "겹겹이데니쉬", image: "image/겹겹이데니쉬.jpg" },
+                { name: "겹겹이연유크림데니쉬", image: "image/겹겹이연유크림데니쉬.jpg" },
+                { name: "딸기연유생크림몽블랑", image: "image/딸기연유생크림몽블랑.jpg" },
+                { name: "패스트리에빠진에그푸딩", image: "image/패스트리에빠진에그푸딩.jpg" },
+                { name: "아몬드크라상", image: "image/아몬드크라상.jpg" },
+                { name: "앙호두버터샌드", image: "image/앙호두버터샌드.jpg" },
+                { name: "새콤달콤유자파이", image: "image/새콤달콤유자파이.jpg" },
+                { name: "딸기생크림크라상", image: "image/딸기생크림크라상.jpg" },
+                { name: "핫도그패스트리", image: "image/핫도그패스트리.jpg" },
+                { name: "겹겹이초코퐁당", image: "image/겹겹이초코퐁당.jpg" },
+                { name: "겹겹이말차퐁당", image: "image/겹겹이말차퐁당.jpg" },
+                { name: "한장씩뜯어먹는32겹브레드", image: "image/한장씩뜯어먹는32겹브레드.jpg" },
+                { name: "오리지널생크림크라상", image: "image/오리지널생크림크라상.jpg" },
+                { name: "스위트바통쉬크레(5개입)", image: "image/스위트바통쉬크레(5개입).jpg" },
+                { name: "오리지널미니아몬드크라상", image: "image/오리지널미니아몬드크라상(5개입).jpg" }
+            ],
+            whitebread:[
+                { name: "2배더진해진순진우유식빵", image: "image/2배더진해진순진우유식빵.jpg" },
+                { name: "마구마구밤식빵", image: "image/마구마구밤식빵.jpg" },
+                { name: "마구마구밤식빵(소)", image: "image/마구마구밤식빵(소).jpg" },
+                { name: "더블롤치즈식빵(대)", image: "image/더블롤치즈식빵(대).png" },
+                { name: "더블롤치즈식빵(소)", image: "image/더블롤치즈식빵(소).png" },
+                { name: "촉촉쫄깃탕종식빵_디즈니", image: "image/촉촉쫄깃탕종식빵_디즈니.jpg" },
+                { name: "TLJ옥수수식빵", image: "image/TLJ옥수수식빵.jpg" },
+                { name: "호박패스트리식빵", image: "image/호박패스트리식빵.jpg" },
+                { name: "호박패스트리식빵(half)", image: "image/호박패스트리식빵(half).jpg" },
+                { name: "그대로구워먹는꿀토스트식빵", image: "image/그대로구워먹는꿀토스트식빵.jpg" },
+                { name: "데일리우유식빵", image: "image/데일리우유식빵.jpg" },
+                { name: "고소한곡물식빵", image: "image/고소한곡물식빵.jpg" },
+                { name: "바로굽는토스트식빵", image: "image/바로굽는토스트식빵.jpg" },
+                { name: "고단백현미식빵", image: "image/고단백현미식빵.jpg" },
+                { name: "2배더진해진순진우유식빵(half)", image: "image/2배더진해진순진우유식빵(half).jpg" },
+                { name: "기본좋은소금버터식빵", image: "image/기본좋은소금버터식빵.jpg" }
+            ],
+            doughnut:[
+                { name: "추억의사라다고로케", image: "image/추억의사라다고로케.jpg" },
+                { name: "NEW정통고로케", image: "image/NEW정통고로케.png" },
+                { name: "옛날단팥도넛", image: "image/옛날단팥도넛.jpg" },
+                { name: "NEW바베큐치킨고로케", image: "image/NEW바베큐치킨고로케.jpg" },
+                { name: "옛날꽈배기도넛", image: "image/옛날꽈배기도넛.jpg" },
+                { name: "엄마랑장볼때먹던그때그도나쓰", image: "image/엄마랑장볼때먹던그때그도나쓰.jpg" },
+                { name: "쫄깃한찹쌀도넛", image: "image/쫄깃한찹쌀도넛.jpg" },
+                { name: "초코마카롱도넛", image: "image/초코마카롱도넛.jpg" },
+                { name: "딸기마카롱도넛", image: "image/딸기마카롱도넛.jpg" },
+                { name: "슈가글레이즈도넛", image: "image/슈가글레이즈도넛.jpg" },
+                { name: "소보로만난앙넛", image: "image/소보로만난앙넛.jpg" },
+                { name: "소보로만난앙넛(3개입)", image: "image/소보로만난앙넛(3개입).jpg" },
+                { name: "충남예산쪽파송송고로케", image: "image/충남예산쪽파숭숭고로케.jpg" }
+            ],
+            europe:[
+                { name: "갈릭퐁당브레드(대)", image: "image/갈릭퐁당브레드(대).jpg" },
+                { name: "갈릭퐁당브레드(소)", image: "image/갈릭퐁당브레드(소).jpg" },
+                { name: "프랑스바게트", image: "image/프랑스바게트.jpg" },
+                { name: "소금버터롤", image: "image/소금버터롤.jpg" },
+                { name: "베리베리건강브레드(대)", image: "image/베리베리 건강브레드(대).jpg" },
+                { name: "크림치즈월넛브레드", image: "image/크림치즈월넛브레드.jpg" },
+                { name: "마늘빵(5개입)", image: "image/마늘빵(5개입).jpg" },
+                { name: "데일리베이글", image: "image/데일리베이글.jpg" },
+                { name: "데일리월넛베이글", image: "image/데일리월넛베이글.jpg" },
+                { name: "데일리블루베리베이글", image: "image/데일리블루베리베이글.jpg" },
+                { name: "데일리크림치즈베이글(플레인)", image: "image/데일리크림치즈베이글(플레인).avif" },
+                { name: "데일리크림치즈베이글(월넛)", image: "image/데일리크림치즈베이글(월넛).jpg" },
+                { name: "데일리크림치즈베이글(블루베리)", image: "image/데일리크림치즈베이글(블루베리).png" },
+                { name: "착한빵식통밀빵", image: "image/착한빵식통밀빵.jpg" },
+                { name: "호두연유바게트", image: "image/호두연유바게트.jpg" },
+                { name: "기본좋은세서미베이글", image: "image/기본좋은세서미베이글.jpg" },
+                { name: "기본좋은쌀베이글", image: "image/기본좋은쌀베이글.jpg" },
+                { name: "기본좋은올리브베이글", image: "image/기본좋은올리브베이글.jpg" },
+                { name: "에그마요소금버터롤", image: "image/에그마요소금버터롤.jpg" },
+                { name: "앙버터소금버터롤", image: "image/앙버터소금버터롤.jpg" },
+                { name: "마늘빵(10개입)", image: "image/마늘빵(10개입).png" }
+            ],
+            sand:[
+                { name: "BELT샌드위치", image: "image/BELT샌드위치.jpg" },
+                { name: "토마토햄치즈크라상샌드위치", image: "image/토마토햄치즈크라상샌드위치.jpg" },
+                { name: "햄포테이토샐러드샌드위치", image: "image/햄포테이토샐러드샌드위치.jpg" },
+                { name: "V.E.L.T 샌드위치", image: "image/V.E.L.T 샌드위치.jpg" },
+                { name: "베이컨에그베이글", image: "image/베이컨에그베이글.jpg" },
+                { name: "단.계.감. 모닝롤 샌드위치", image: "image/단.계.감. 모닝롤샌드위치.jpg" },
+                { name: "통밀후레쉬샌드위치", image: "image/통밀후레쉬샌드위치.jpg" },
+                { name: "에그튜나샌드위치", image: "image/에그튜나샌드위치.jpg" },
+                { name: "레드타코샌드위치", image: "image/레드타코샌드위치.jpg" },
+                { name: "고소한햄치즈에그샌드위치", image: "image/고소한햄치즈에그샌드위치.jpg" },
+                { name: "쉬림프에그마요샌드위치", image: "image/쉬림프에그마요샌드위치.jpg" },
+                { name: "쉬림프아삭패스트리", image: "image/쉬림프아삭패스트리.jpg" },
+                { name: "크랜베리샌드위치", image: "image/크랜베리샌드위치.jpg" },
+                { name: "에그마요소금버터롤", image: "image/에그마요소금버터롤.jpg" },
+                { name: "잠봉뵈로소금버터롤", image: "image/잠봉뵈로소금버터롤.jpg" },
+                { name: "BELT샌드위치(half)", image: "image/BELT샌드위치(half).jpg" },
+                { name: "콥샐러드", image: "image/콥샐러드.jpg" },
+                { name: "BLT콥샐러드", image: "image/BLT콥샐러드.jpg" },
+                { name: "쉬림프에그샐러드", image: "image/쉬림프에그샐러드.jpg" }
+            ]
+        };
+
+        // 카테고리 버튼과 상품 표시 영역
+        const categoryButtons = document.querySelectorAll(".category-btn");
+        const productButtonsContainer = document.querySelector(".product-buttons");
+
+        // 버튼 클릭 이벤트
+        categoryButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                // 모든 버튼에서 active 클래스 제거
+                categoryButtons.forEach(btn => btn.classList.remove("active"));
+                // 클릭된 버튼에 active 클래스 추가
+                this.classList.add("active");
+
+                // 선택한 카테고리 가져오기
+                const category = this.getAttribute("data-category");
+
+                // 상품 업데이트
+                updateProducts(category);
+            });
+        });
+
+          // 페이지 관련 상태
+    let currentPage = 1; // 현재 페이지
+    const itemsPerPage = 20; // 한 페이지에 표시할 아이템 수
+
+    // 상품 업데이트 함수
+    function updateProducts(category) {
+        const productButtonsContainer = document.querySelector(".product-buttons");
+        productButtonsContainer.innerHTML = ""; // 기존 상품 제거
+
+        const productsInCategory = products[category];
+        const totalPages = Math.ceil(productsInCategory.length / itemsPerPage);
+
+        // 현재 페이지에 해당하는 상품만 표시
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const productsToDisplay = productsInCategory.slice(startIndex, endIndex);
+
+        productsToDisplay.forEach(product => {
+            const button = document.createElement("button");
+            button.innerHTML = `<img src="${product.image}" alt="${product.name}"><br>${product.name}`;
+            productButtonsContainer.appendChild(button);
+        });
+
+        // 페이지 버튼 활성화/비활성화
+        document.getElementById("prev-page").disabled = currentPage === 1;
+        document.getElementById("next-page").disabled = currentPage === totalPages;
+
+        document.getElementById("page-number").textContent = `${currentPage} / ${totalPages}`;
+    }
+
+        // 페이지 전환 버튼 이벤트
+        document.getElementById("prev-page").addEventListener("click", () => {
+            if (currentPage > 1) {
+                currentPage--;
+                const activeCategory = document.querySelector(".category-btn.active").dataset.category;
+                updateProducts(activeCategory);
+            }
+        });
+
+        document.getElementById("next-page").addEventListener("click", () => {
+            const activeCategory = document.querySelector(".category-btn.active").dataset.category;
+            const totalPages = Math.ceil(products[activeCategory].length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                updateProducts(activeCategory);
+            }
+        });
+
+        // 카테고리 버튼 클릭 이벤트
+        categoryButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                categoryButtons.forEach(btn => btn.classList.remove("active"));
+                this.classList.add("active");
+                currentPage = 1; // 페이지 초기화
+                const category = this.getAttribute("data-category");
+                updateProducts(category);
+            });
+        });
+
+        // 초기 상태 설정 (중분류 표시)
+        updateProducts("all");
+            // 모든 링크 요소 가져오기
+            const links = document.querySelectorAll('.info-links a');
+
+            // 클릭 이벤트 추가
+            links.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    // 모든 링크에서 active 클래스 제거
+                    links.forEach(l => l.classList.remove('active'));
+                    // 클릭된 링크에 active 클래스 추가
+                    this.classList.add('active');
+                });
+            });
+
+            //페이지 전환 버튼 추가
+
+            function updateTime() {
+                const now = new Date(); // 현재 시간 가져오기
+
+                // 년도, 월, 일 가져오기
+                const year = now.getFullYear(); // 년도
+                const month = String(now.getMonth() + 1).padStart(2, '0'); // 월 (0부터 시작하므로 +1)
+                const date = String(now.getDate()).padStart(2, '0'); // 일
+
+                // 시, 분, 초 가져오기
+                const hours = String(now.getHours()).padStart(2, '0'); // 시
+                const minutes = String(now.getMinutes()).padStart(2, '0'); // 분
+                const seconds = String(now.getSeconds()).padStart(2, '0'); // 초
+
+                // 날짜와 시간 포맷팅
+                const formattedDate = `${year}-${month}-${date}`; // YYYY-MM-DD 형식
+                const formattedTime = `${hours}:${minutes}:${seconds}`; // HH:MM:SS 형식
+
+                // HTML에 날짜와 시간 표시
+                document.getElementById('current-time').textContent = ` ${formattedDate} ${formattedTime}`;
+            }
+
+            // 1초마다 시간 업데이트
+            setInterval(updateTime, 1000);
+
+            // 초기 시간 표시
+            updateTime();
+
+
+                        // 버튼과 중분류 항목 선택
+            const buttons = document.querySelectorAll('.button-table button');
+            const tableCells = document.querySelectorAll('.left-table td');
+
+            // 버튼 클릭 이벤트
+            buttons.forEach(button => {
+                button.addEventListener('click', function () {
+                    // 모든 버튼에서 active 클래스 제거
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    // 클릭된 버튼에 active 클래스 추가
+                    this.classList.add('active');
+                });
+            });
+
+            // 중분류 항목 클릭 이벤트
+            tableCells.forEach(cell => {
+                cell.addEventListener('click', function () {
+                    // 모든 셀에서 active 클래스 제거
+                    tableCells.forEach(td => td.classList.remove('active'));
+                    // 클릭된 셀에 active 클래스 추가
+                    this.classList.add('active');
+                });
+            });
+        </script>
+    </body>
+</html>
